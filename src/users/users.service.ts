@@ -12,7 +12,7 @@ export class UsersService {
 
     async createUser(dto: CreateUserDto): Promise<User> {
         const user = await this.userRepository.create(dto);
-        const role = await this.roleService.getRoleByValue("user")
+        const role = await this.roleService.getByValue("user")
         await user.$set('roles', [role.id])
         user.roles = [role]
         return user;
@@ -34,7 +34,7 @@ export class UsersService {
     }
 
     async deleteUserById(id: number): Promise<Number> {
-        const user = this.userRepository.destroy({where: {id}})
+        const user = await this.userRepository.destroy({where: {id}})
         return user
     }
 
