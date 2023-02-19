@@ -7,13 +7,16 @@ import { Role } from 'src/roles/roles.model';
 import { UserRoles } from 'src/roles/user-roles.model';
 import { RolesModule } from 'src/roles/roles.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { Room } from 'src/rooms/entities/room.entity';
+import { RoomsModule } from 'src/rooms/rooms.module';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
-    SequelizeModule.forFeature([User, Role, UserRoles]),
+    SequelizeModule.forFeature([User, Role, UserRoles, Room]),
     RolesModule,
+    forwardRef(() => RoomsModule),
     forwardRef(() => AuthModule)
   ],
   exports: [
