@@ -10,7 +10,7 @@ export class UsersService {
     constructor(@InjectModel(User) private userRepository: typeof User,
                 private roleService: RolesService) {}
 
-    async createUser(dto: CreateUserDto) {
+    async createUser(dto: CreateUserDto): Promise<User> {
         const user = await this.userRepository.create(dto);
         const role = await this.roleService.getRoleByValue("user")
         await user.$set('roles', [role.id])
@@ -18,23 +18,24 @@ export class UsersService {
         return user;
     }
 
-    async getAllUsers() {
+    async getAllUsers(): Promise<User[]> {
         const users = await this.userRepository.findAll({include: {all: true}});
         return users;
     }
 
-    async getUserById(id: number) {
+    async getUserById(id: number): Promise<User> {
         const user = await this.userRepository.findOne({where: {id}, include: {all: true}})
         return user;
     }
 
-    async getUserByEmail(email: string) {
+    async getUserByEmail(email: string): Promise<User> {
         const user = await this.userRepository.findOne({where: {email}, include: {all: true}})
         return user
     }
 
-    // async deleteUserById(id: number) {
-    //     const user = await this.userRepository.remove()
-    // }
+    async deleteUserById(id: number): Promise<Number> {
+        const user = this.userRepository.destroy({where: {id}})
+        return user
+    }
 
 }

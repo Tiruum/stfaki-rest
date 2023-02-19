@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Delete, Put } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -31,11 +31,18 @@ export class UsersController {
         return this.usersService.getUserById(id)
     }
 
-    // @ApiOperation({summary: 'Удаление пользователя по ID'})
+    // @ApiOperation({summary: 'Изменение пользователя по ID'})
     // @ApiResponse({status: 200, type: Number})
-    // @Delete(':id')
-    // deleteUser(@Param('id') id: string) {
-    //     return this.usersService.delete(id)
+    // @Put(':id')
+    // updateUser(@Body() CreateUserDto, @Param('id') id: number) {
+    //     return this.usersService.deleteUserById(id)
     // }
+
+    @ApiOperation({summary: 'Удаление пользователя по ID'})
+    @ApiResponse({status: 200, type: Number})
+    @Delete(':id')
+    deleteUser(@Param('id') id: number) {
+        return this.usersService.deleteUserById(id)
+    }
 
 }
