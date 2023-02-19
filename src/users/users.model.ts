@@ -28,7 +28,7 @@ export class User extends Model<User, UserCreationAttrs> {
 
     @ApiProperty({example: 'Описание', description: 'Причина бана'})
     @Column({type: DataType.STRING})
-    banReason: boolean;
+    banReason: string;
 
     // @Column({type:, unique:, primaryKey:})
     // banTimeout: number

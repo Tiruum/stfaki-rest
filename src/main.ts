@@ -8,7 +8,7 @@ async function start() {
 
     // Swagger documentation builder
     const config = new DocumentBuilder()
-    .setTitle('DASR Dorm Rest Api')
+    .setTitle('DASR Dorm Rest Apiссался')
     .setDescription('Rest api приложение для работы студенческих сервисов общежития ФАКТ')
     .setVersion('1.0.0')
     .setContact('Timur Selin', 'https://vk.com/tiruum', 'selin.ta@phystech.edu')
