@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { EntriesModule } from './entries/entries.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { Room } from "./rooms/entities/room.entity";
+import { Entry } from "./entries/entities/entry.entity";
 
 @Module({
     controllers: [],
@@ -25,7 +26,7 @@ import { Room } from "./rooms/entities/room.entity";
             username: process.env.PG_USERNAME,
             password: process.env.PG_PASSWORD,
             database: process.env.PG_DB,
-            models: [User, Role, UserRoles, Room],
+            models: [User, Role, UserRoles, Room, Entry],
             autoLoadModels: true
         }),
         UsersModule,

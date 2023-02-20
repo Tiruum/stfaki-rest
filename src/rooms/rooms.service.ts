@@ -24,13 +24,18 @@ export class RoomsService {
     return rooms
   }
 
-  async findOne(id: number): Promise<Room> {
+  async findByValue(value: string): Promise<Room> {
+    const room = await this.roomRepository.findOne({where: {value}, include: {all: true}});
+    return room;
+  }
+
+  async findById(id: number): Promise<Room> {
     const room = await this.roomRepository.findOne({where: {id}, include: {all: true}});
     return room;
   }
 
-  async update(id: number, updateRoomDto: UpdateRoomDto) {
-    const room = await this.roomRepository.update({...updateRoomDto}, {where: {id}, returning: true})
+  async update(value: string, updateRoomDto: UpdateRoomDto) {
+    const room = await this.roomRepository.update({...updateRoomDto}, {where: {value}, returning: true})
     return room
   }
 

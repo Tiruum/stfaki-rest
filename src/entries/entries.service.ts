@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateEntryDto } from './dto/create-entry.dto';
 import { UpdateEntryDto } from './dto/update-entry.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Entry } from './entities/entry.entity';
+import { UsersService } from 'src/users/users.service';
+import { RoomsService } from 'src/rooms/rooms.service';
 
 @Injectable()
 export class EntriesService {
-  create(createEntryDto: CreateEntryDto) {
-    return 'This action adds a new entry';
+
+  constructor(@InjectModel(Entry) private entryRepository: typeof Entry,
+              private usersService: UsersService,
+              private roomsService: RoomsService) {}
+
+  async create(createEntryDto: CreateEntryDto) {
+    const entry = this.entryRepository.create(createEntryDto);
+    const user = await this.usersService.getUserById(createEntryDto.userId);
+    const room = await this.roomsService.findByValue(createEntryDto.roomValue);
+    if (user && room) {
+      (await entry).$set('userInfo', user.id);
+      (await entry).userInfo = user;
+      (await entry).$set('roomInfo', room.id);
+      (await entry).roomInfo = room;
+      return entry;
+    } else {
+      throw new HttpException("Такого пользователя или комнаты не найдено", HttpStatus.NOT_FOUND)
+    }
   }
 
-  findAll() {
-    return `This action returns all entries`;
+  async findAll(): Promise<Entry[]> {
+    const entries = await this.entryRepository.findAll({include: {all: true}});
+    return entries;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} entry`;
+  async findOne(id: number) {
+    const entry = await this.entryRepository.findOne({where: {id}, include: {all: true}});
+    return entry;
   }
 
-  update(id: number, updateEntryDto: UpdateEntryDto) {
-    return `This action updates a #${id} entry`;
+  async update(id: number, updateEntryDto: UpdateEntryDto) {
+    const entry = await this.entryRepository.update({...updateEntryDto}, {where: {id}, returning: true})
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} entry`;
+  async remove(id: number) {
+    const entry = await this.entryRepository.destroy({where: {id}})
   }
+  
 }

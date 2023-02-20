@@ -5,8 +5,8 @@ export class CreateEntryDto {
     @ApiProperty({example: '123', description: 'ID пользователя'})
     readonly userId: number;
 
-    @ApiProperty({example: '123', description: 'ID комнаты'})
-    readonly commonRoomId: number;
+    @ApiProperty({example: '2', description: 'ID комнаты'})
+    readonly roomValue: string;
 
     @ApiProperty({example: 'Просмотр фильма', description: 'Название мероприятия'})
     readonly title: string;
@@ -19,5 +19,11 @@ export class CreateEntryDto {
 
     @ApiProperty({example: '20-02-2023T22:00:00', description: 'Конец мероприятия'})
     readonly to: Date;
+
+    @ApiProperty({example: 'red', description: 'Название цвета'})
+    readonly color: string;
+
+    @ApiProperty({example: 'weekly', description: 'Тип мероприятия'})
+    readonly type: "one-time" | "weekly" | "monthly";
 
 }

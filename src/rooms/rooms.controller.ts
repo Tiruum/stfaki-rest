@@ -19,14 +19,19 @@ export class RoomsController {
     return this.roomsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomsService.findOne(+id);
+  @Get(':value')
+  findByValue(@Param('value') value: string) {
+    return this.roomsService.findByValue(value);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(+id, updateRoomDto);
+  @Get(':id')
+  findById(@Param('id') id: number) {
+    return this.roomsService.findById(+id);
+  }
+
+  @Patch(':value')
+  update(@Param('value') value: string, @Body() updateRoomDto: UpdateRoomDto) {
+    return this.roomsService.update(value, updateRoomDto);
   }
 
   @Delete(':id')

@@ -1,5 +1,4 @@
-import {Model, Table, Column, DataType, BelongsToMany, ForeignKey} from "sequelize-typescript"
-import {ApiProperty} from '@nestjs/swagger'
+import {Model, Table, Column, DataType, ForeignKey, BelongsTo} from "sequelize-typescript"
 import { User } from "src/users/users.model";
 import { Room } from "src/rooms/entities/room.entity";
 
@@ -30,15 +29,24 @@ export class Entry extends Model<Entry, EntryCreationAttrs> {
     @Column({type: DataType.STRING})
     description: string;
 
-    @Column({type: DataType.DATE, defaultValue: false})
+    @Column({type: 'TIMESTAMPTZ', allowNull: false})
     from: Date;
 
-    @Column({type: DataType.STRING})
+    @Column({type: 'TIMESTAMPTZ', allowNull: false})
     to: Date;
 
     @Column({type: DataType.STRING, defaultValue: 'one-time'})
     type: string;
 
-    // @BelongsToMany(() => Role, () => UserRoles)
-    // roles: Role[]
+    @Column({type: DataType.STRING, allowNull: false, defaultValue: 'sky'})
+    color: string;
+
+    @BelongsTo(() => User)
+    responsible: User
+
+    @BelongsTo(() => User)
+    userInfo: User
+
+    @BelongsTo(() => Room)
+    roomInfo: Room
 }

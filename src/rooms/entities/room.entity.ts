@@ -1,6 +1,7 @@
-import {Model, Table, Column, DataType, ForeignKey, BelongsTo} from "sequelize-typescript"
+import {Model, Table, Column, DataType, ForeignKey, BelongsTo, HasMany} from "sequelize-typescript"
 import {ApiProperty} from '@nestjs/swagger'
 import { User } from "src/users/users.model";
+import { Entry } from "src/entries/entities/entry.entity";
 
 interface RoomCreationAttrs {
     title: string,
@@ -29,5 +30,8 @@ export class Room extends Model<Room, RoomCreationAttrs> {
 
     @BelongsTo(() => User)
     responsible: User
+
+    @HasMany(() => Entry)
+    entries: Entry[]
     
 }
