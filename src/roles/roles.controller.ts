@@ -30,7 +30,7 @@ export class RolesController {
         return this.roleService.getByValue(value);
     }
 
-    @ApiOperation({summary: 'Удаление роли по ID'})
+    @ApiOperation({summary: 'Изменение роли по ID'})
     @ApiResponse({status: 200, type: Number})
     @Put('/:value')
     putById(@Body() dto: CreateRoleDto, @Param('value') value: string) {

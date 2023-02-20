@@ -11,6 +11,8 @@ import { EntriesModule } from './entries/entries.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { Room } from "./rooms/entities/room.entity";
 import { Entry } from "./entries/entities/entry.entity";
+import { WmEntriesModule } from './wm-entries/wm-entries.module';
+import { WmEntry } from "./wm-entries/entities/wm-entry.entity";
 
 @Module({
     controllers: [],
@@ -26,7 +28,7 @@ import { Entry } from "./entries/entities/entry.entity";
             username: process.env.PG_USERNAME,
             password: process.env.PG_PASSWORD,
             database: process.env.PG_DB,
-            models: [User, Role, UserRoles, Room, Entry],
+            models: [User, Role, UserRoles, Room, Entry, WmEntry],
             autoLoadModels: true
         }),
         UsersModule,
@@ -34,6 +36,7 @@ import { Entry } from "./entries/entities/entry.entity";
         AuthModule,
         EntriesModule,
         RoomsModule,
+        WmEntriesModule,
     ]
 })
 export class AppModule {}

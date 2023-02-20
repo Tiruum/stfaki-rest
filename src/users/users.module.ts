@@ -11,15 +11,18 @@ import { Room } from 'src/rooms/entities/room.entity';
 import { RoomsModule } from 'src/rooms/rooms.module';
 import { Entry } from 'src/entries/entities/entry.entity';
 import { EntriesModule } from 'src/entries/entries.module';
+import { WmEntry } from 'src/wm-entries/entities/wm-entry.entity';
+import { WmEntriesModule } from 'src/wm-entries/wm-entries.module';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
-    SequelizeModule.forFeature([User, Role, UserRoles, Room, Entry]),
+    SequelizeModule.forFeature([User, Role, UserRoles, Room, Entry, WmEntry]),
     RolesModule,
     forwardRef(() => RoomsModule),
     forwardRef(() => AuthModule),
+    forwardRef(() => WmEntriesModule),
   ],
   exports: [
     UsersService,

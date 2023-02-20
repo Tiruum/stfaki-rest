@@ -3,6 +3,7 @@ import { Entry } from "src/entries/entities/entry.entity";
 import { Role } from "src/roles/roles.model";
 import { UserRoles } from "src/roles/user-roles.model";
 import { Room } from "src/rooms/entities/room.entity";
+import { WmEntry } from "src/wm-entries/entities/wm-entry.entity";
 
 interface UserCreationAttrs {
     email: string,
@@ -38,5 +39,8 @@ export class User extends Model<User, UserCreationAttrs> {
 
     @HasMany(() => Entry)
     entries: Entry[]
+
+    @HasMany(() => WmEntry)
+    wmEntries: WmEntry[]
 
 }
