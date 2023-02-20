@@ -1,8 +1,11 @@
 import {Model, Table, Column, DataType, ForeignKey, BelongsTo} from "sequelize-typescript"
 import { User } from "src/users/users.model";
+import { Wm } from "src/wms/entities/wm.entity";
 
 interface WmEntryCreationAttrs {
     title: string,
+    userId: number;
+    wmValue: number;
     description: string,
     from: Date,
     to: Date,
@@ -14,9 +17,6 @@ export class WmEntry extends Model<WmEntry, WmEntryCreationAttrs> {
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    @Column({type: DataType.INTEGER, unique: true, allowNull: false})
-    value: number;
-
     @Column({type: DataType.STRING, allowNull: false})
     status: "closed" | "passed" | "booked" | "empty";
 
@@ -24,8 +24,9 @@ export class WmEntry extends Model<WmEntry, WmEntryCreationAttrs> {
     @Column({type: DataType.INTEGER})
     userId: number | null;
 
-    @Column({type: DataType.STRING})
-    wmId: number | null;
+    @ForeignKey(() => Wm)
+    @Column({type: DataType.INTEGER})
+    wmId: number;
 
     @Column({type: DataType.STRING, allowNull: false})
     time: string;
@@ -35,4 +36,7 @@ export class WmEntry extends Model<WmEntry, WmEntryCreationAttrs> {
 
     @BelongsTo(() => User)
     userInfo: User
+
+    @BelongsTo(() => Wm)
+    wmInfo: Wm
 }

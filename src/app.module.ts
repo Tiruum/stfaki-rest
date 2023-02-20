@@ -13,6 +13,8 @@ import { Room } from "./rooms/entities/room.entity";
 import { Entry } from "./entries/entities/entry.entity";
 import { WmEntriesModule } from './wm-entries/wm-entries.module';
 import { WmEntry } from "./wm-entries/entities/wm-entry.entity";
+import { WmsModule } from './wms/wms.module';
+import { Wm } from "./wms/entities/wm.entity";
 
 @Module({
     controllers: [],
@@ -28,7 +30,7 @@ import { WmEntry } from "./wm-entries/entities/wm-entry.entity";
             username: process.env.PG_USERNAME,
             password: process.env.PG_PASSWORD,
             database: process.env.PG_DB,
-            models: [User, Role, UserRoles, Room, Entry, WmEntry],
+            models: [User, Role, UserRoles, Room, Entry, WmEntry, Wm],
             autoLoadModels: true
         }),
         UsersModule,
@@ -37,6 +39,7 @@ import { WmEntry } from "./wm-entries/entities/wm-entry.entity";
         EntriesModule,
         RoomsModule,
         WmEntriesModule,
+        WmsModule,
     ]
 })
 export class AppModule {}

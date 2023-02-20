@@ -5,7 +5,7 @@ export class CreateEntryDto {
     @ApiProperty({example: '123', description: 'ID пользователя'})
     readonly userId: number;
 
-    @ApiProperty({example: '2', description: 'ID комнаты'})
+    @ApiProperty({example: 'kds', description: 'Кодовое название комнаты'})
     readonly roomValue: string;
 
     @ApiProperty({example: 'Просмотр фильма', description: 'Название мероприятия'})
