@@ -12,11 +12,11 @@ DASR RA is a rest api for student services.
 3. authentication
 4. guards
 5. rooms
+6. entries
+7. washing machines
+8. wm entries
 
 ## To do
-1. entries
-2. washing machines
-3. wm entries
 
 ## Stay in touch
 
