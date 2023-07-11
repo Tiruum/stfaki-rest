@@ -42,6 +42,11 @@ export class WmEntriesService {
     return wmEntry;
   }
 
+  async findByDate(date: string): Promise<WmEntry[]> {
+    const wmEntries = await this.wmEntryRepository.findAll({where: {date}, include: {all: true}});
+    return wmEntries;
+  }
+
   async update(id: number, updateWmEntryDto: UpdateWmEntryDto): Promise<WmEntry> {
     const wmEntry = await this.wmEntryRepository.update({...updateWmEntryDto}, {where: {id}, returning: true})
     return wmEntry[0][0]

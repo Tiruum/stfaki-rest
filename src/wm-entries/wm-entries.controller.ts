@@ -24,11 +24,18 @@ export class WmEntriesController {
     return this.wmEntriesService.findAll();
   }
 
-  @ApiOperation({summary: 'Получение записи по Id'})
-  @ApiResponse({status: 200, type: WmEntry})
-  @Get(':id')
-  findById(@Param('id') id: number) {
-    return this.wmEntriesService.findById(+id);
+  // @ApiOperation({summary: 'Получение записи по Id'})
+  // @ApiResponse({status: 200, type: WmEntry})
+  // @Get(':id')
+  // findById(@Param('id') id: number) {
+  //   return this.wmEntriesService.findById(+id);
+  // }
+
+  @ApiOperation({summary: 'Получение записей по дате'})
+  @ApiResponse({status: 200, type: [WmEntry]})
+  @Get(':date')
+  findByDate(@Param('date') date: string) {
+    return this.wmEntriesService.findByDate(date);
   }
 
   @ApiOperation({summary: 'Изменение записи'})
