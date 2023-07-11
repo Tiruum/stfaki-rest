@@ -10,7 +10,7 @@ interface WmCreationAttrs {
 @Table({tableName: 'wms'})
 export class Wm extends Model<Wm, WmCreationAttrs> {
     
-    @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
+    @Column({type: DataType.INTEGER, unique: true, allowNull: false, autoIncrement: true, primaryKey: true})
     id: number;
 
     @Column({type: DataType.INTEGER, allowNull: false})
