@@ -5,6 +5,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Entry } from './entities/entry.entity';
 import { UsersService } from 'src/users/users.service';
 import { RoomsService } from 'src/rooms/rooms.service';
+import { Op } from 'sequelize';
+import { Room } from 'src/rooms/entities/room.entity';
+import { User } from 'src/users/users.model';
 
 @Injectable()
 export class EntriesService {
@@ -33,9 +36,28 @@ export class EntriesService {
     return entries;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Entry> {
     const entry = await this.entryRepository.findOne({where: {id}, include: {all: true}});
     return entry;
+  }
+
+  async findByParams(room: string, fromDate: string, toDate: string): Promise<Entry[]> {
+    const fD = new Date(fromDate)
+    const tD = new Date(toDate)
+    const entries = await this.entryRepository.findAll({
+      where: {
+        [Op.and]: {
+          from: {
+            [Op.between]: [fD, tD]
+          },
+          to: {
+            [Op.between]: [fD, tD]
+          },
+        },
+      },
+      include: [{model: Room, where: {value: room}}, {all: true}],
+    });
+    return entries;
   }
 
   async update(id: number, updateEntryDto: UpdateEntryDto) {

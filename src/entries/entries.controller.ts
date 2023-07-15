@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { EntriesService } from './entries.service';
 import { CreateEntryDto } from './dto/create-entry.dto';
 import { UpdateEntryDto } from './dto/update-entry.dto';
@@ -17,6 +17,11 @@ export class EntriesController {
   @Get()
   findAll() {
     return this.entriesService.findAll();
+  }
+
+  @Get('filter')
+  findByParams(@Query() { room, fromDate, toDate }: any) {
+    return this.entriesService.findByParams(room, fromDate, toDate);
   }
 
   @Get(':id')
