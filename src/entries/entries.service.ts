@@ -8,6 +8,7 @@ import { RoomsService } from 'src/rooms/rooms.service';
 import { Op } from 'sequelize';
 import { Room } from 'src/rooms/entities/room.entity';
 import { User } from 'src/users/users.model';
+import validateEntryForEntryCalendar from 'src/helpers/validateEntryForEntryCalendar';
 
 @Injectable()
 export class EntriesService {
@@ -17,17 +18,36 @@ export class EntriesService {
               private roomsService: RoomsService) {}
 
   async create(createEntryDto: CreateEntryDto) {
-    const entry = this.entryRepository.create(createEntryDto);
-    const user = await this.usersService.getUserById(createEntryDto.userId);
-    const room = await this.roomsService.findByValue(createEntryDto.roomValue);
-    if (user && room) {
-      (await entry).$set('userInfo', user.id);
-      (await entry).userInfo = user;
-      (await entry).$set('roomInfo', room.id);
-      (await entry).roomInfo = room;
-      return entry;
+    // Нельзя создавать записи на прошедшие даты
+    console.log(createEntryDto.from)
+    console.log(new Date().toLocaleDateString("eu-RU", {timeZone: "Europe/Moscow"}).replace(/(\d{2}\1)\.(\d{2}\2)\.(\d{4}\3)/, "$3-$2-$1"))
+    if (new Date(String(createEntryDto.from).replace(/(\d{1,}\1)\-(\d{1,}\2)\-(\d{4}\3)/, "$3-$2-$1")) >= new Date(new Date().toLocaleDateString("eu-RU", {timeZone: "Europe/Moscow"}).replace(/(\d{2}\1)\.(\d{2}\2)\.(\d{4}\3)/, "$3-$2-$1"))) {
+      // Получить все записи, даты начала которых больше или равны сегодняшней (для сравнения, чтобы не проверять даты, записи на которые не должно быть)
+      const entries = await this.entryRepository.findAll({
+        where: {
+          from: {
+            [Op.gte]: new Date().toLocaleDateString("eu-RU", {timeZone: "Europe/Moscow"}).replace(/(\d{2}\1)\.(\d{2}\2)\.(\d{4}\3)/, "$3-$2-$1")
+          }
+        },
+        include: [{model: Room, where: {value: createEntryDto.roomValue}}, {all: true}],
+      })
+  
+      const entry = await this.entryRepository.create(createEntryDto);
+      const user = await this.usersService.getUserById(createEntryDto.userId);
+      const room = await this.roomsService.findByValue(createEntryDto.roomValue);
+      if (validateEntryForEntryCalendar(entries, entry)) {
+        if (user && room) {
+          (await entry).$set('userInfo', user.id);
+          (await entry).userInfo = user;
+          (await entry).$set('roomInfo', room.id);
+          (await entry).roomInfo = room;
+          return entry;
+        } else {
+          throw new HttpException("Такого пользователя или комнаты не найдено", HttpStatus.NOT_FOUND)
+        }
+      }
     } else {
-      throw new HttpException("Такого пользователя или комнаты не найдено", HttpStatus.NOT_FOUND)
+      throw new HttpException("День уже прошел", HttpStatus.BAD_REQUEST)
     }
   }
 
