@@ -22,48 +22,47 @@ interface Entry {
     userInfo: User
 }
 
-function range(start: string, end: string): number[] {
+function range(start: number, end: number): number[] {
     var ans = [];
-    for (let i = Number(start.slice(0, 2)); i <= Number(end.slice(0, 2)); i++) {
+    for (let i = start; i <= end; i++) {
         ans.push(i);
     }
     return ans;
 };
 
-function timeToNum(time: string): number {
-    return Number(time.slice(0, 2))
-};
-
 function getEmptySpace(todayEntries: Entry[]): number[] {
-    let emptySpace = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    let emptySpace = Array(24*60-1).fill(0).map((element, index) => index)
     todayEntries.forEach(function(entry: Entry){
-        emptySpace = emptySpace.filter(x => !range(entry.from.toJSON().slice(11, 16), entry.to.toJSON().slice(11, 16)).includes(x))
-        
-        
-        emptySpace.push(timeToNum(entry.from.toJSON().slice(11, 16)), timeToNum(entry.to.toJSON().slice(11, 16))) // Здесь я включаю границу множества, чтобы можно было, например, начинать запись с 05:00,
-        // если предыдущая запись закончилась в 05:00
-        
+        emptySpace = emptySpace.filter(x => !range(timeToMinutes(entry.from.toJSON().slice(11, 16)), timeToMinutes(entry.to.toJSON().slice(11, 16))).includes(x))
+        emptySpace.push(timeToMinutes(entry.from.toJSON().slice(11, 16)), timeToMinutes(entry.to.toJSON().slice(11, 16))) // Здесь я включаю границу множества, чтобы можно было, например, начинать запись с 05:00, если предыдущая запись закончилась в 05:00
     });
     return emptySpace;
 };
 
+function timeToMinutes(time: string): number {
+    return Number(time.slice(0, 2))*60+Number(time.slice(3, 5))
+}
+
 export default function validateEntryForEntryCalendar(calendarData: Entry[], form: Entry) {
-    if (form.from.toJSON().slice(0, 10) === form.to.toJSON().slice(0, 10)) { // Если даты равны
-        if ( Number(form.to.toJSON().slice(11, 13))-Number(form.from.toJSON().slice(11, 13)) <= 6 && Number(form.to.toJSON().slice(11, 13)) > Number(form.from.toJSON().slice(11, 13)) && Number(form.from.toJSON().slice(11, 13)) >= 0 && Number(form.to.toJSON().slice(11, 13)) <= 23 ) {
-            let todayEntries = calendarData.filter(entry => entry.from.toJSON().slice(0, 10) === form.from.toJSON().slice(0, 10)) // Записи на выбранную дату
-            if (todayEntries) {
-                let emptySpace = [] as number[]
-                Array.isArray(todayEntries) ? emptySpace = getEmptySpace(todayEntries) : emptySpace = getEmptySpace([todayEntries])
-                if (range(form.from.toJSON().slice(11, 16), form.to.toJSON().slice(11, 16)).sort().join(',') === emptySpace.filter(x => range(form.from.toJSON().slice(11, 16), form.to.toJSON().slice(11, 16)).includes(x)).sort().join(',')) {
-                    return true
-                } else {
-                    throw new HttpException("Записи перекрывают друг друга", HttpStatus.BAD_REQUEST)
-                }
-            }
+    form.title = form.title.replace(/\s{1,}/gmi, " ")
+    form.description = form.description.replace(/\s{1,}/gmi, " ")
+    const start_time = timeToMinutes(form.from.toJSON().slice(11, 16))
+    const end_time = timeToMinutes(form.to.toJSON().slice(11, 16))
+    
+    if ((form.title.length > 25) || (form.description.length > 50)) throw new HttpException("Нельзя делать названия слишком длинными", HttpStatus.BAD_REQUEST)
+    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(form.title) || /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(form.description)) throw new HttpException("Не пытайся делать SQL инъекции, гнида", HttpStatus.BAD_REQUEST)
+    if (form.from.toJSON().slice(0, 10) !== form.to.toJSON().slice(0, 10)) throw new HttpException("Пока что можно бронировать комнату в пределах одного дня", HttpStatus.BAD_REQUEST)
+    if (start_time >= end_time) throw new HttpException("Ошибка в задании времени", HttpStatus.BAD_REQUEST)
+    if (end_time - start_time < 10) throw new HttpException("Нельзя делать записи короче 10 минут", HttpStatus.BAD_REQUEST)
+    
+    let todayEntries = calendarData.filter(entry => entry.from.toJSON().slice(0, 10) === form.from.toJSON().slice(0, 10)) // Записи на выбранную дату
+    if (todayEntries) {
+        let emptySpace = [] as number[]
+        Array.isArray(todayEntries) ? emptySpace = getEmptySpace(todayEntries) : emptySpace = getEmptySpace([todayEntries])
+        if (range(start_time, end_time).sort().join(',') === emptySpace.filter(x => range(start_time, end_time).includes(x)).sort().join(',')) {
+            return true
         } else {
-            throw new HttpException("Нельзя делать бронь дольше 6 часов или равной нулю", HttpStatus.BAD_REQUEST)
+            throw new HttpException("Записи перекрывают друг друга", HttpStatus.BAD_REQUEST)
         }
-    } else {
-        throw new HttpException("Пока что можно бронировать комнату в пределах одного дня", HttpStatus.BAD_REQUEST)
     }
 }

@@ -1,0 +1,74 @@
+version: '3.5'
+
+services:
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/
+    restart: always
+    ports:
+      - "80:80"
+
+  backend:
+    image: tiruum/stfaki-backend:latest
+    build: .
+    restart: unless-stopped
+    working_dir: /app
+    # volumes:
+    #   - ./backend:/app
+    #   - /app/node_modules
+    ports:
+      - '5000:5000'
+    depends_on:
+      - db
+      - nginx
+
+  frontend:
+    image: tiruum/stfaki-frontend:latest
+    build: ../stfaki-next/.
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      - BASEURL=nginx
+    # volumes:
+    #   - ./frontend:/app
+    #   - /app/node_modules
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+      - backend
+      - nginx
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: Selin2002
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: postgres
+      POSTGRES_DB: stfaki
+    ports:
+      - 5432:5432
+    # volumes:
+    #   - ~/dbdata:/var/lib/postgresql/data
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   container_name: nest-pgadmin4
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=postgres
+  #     - PGADMIN_DEFAULT_PASSWORD=Selin2002
+  #   ports:
+  #     - '5050:80'
+  #   depends_on:
+  #     - db
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
