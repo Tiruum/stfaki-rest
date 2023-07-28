@@ -6,6 +6,7 @@ import { RolesService } from 'src/roles/roles.service';
 import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { UnbanUserDto } from './dto/unban-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,6 +40,11 @@ export class UsersService {
     async deleteUserById(id: number): Promise<Number> {
         const user = await this.userRepository.destroy({where: {id}})
         return user
+    }
+
+    async update(id: number, updateUserDto: UpdateUserDto) {
+        const room = await this.userRepository.update({...updateUserDto}, {where: {id}, returning: true})
+        return room
     }
 
     async changeRole(dto: AddRoleDto) {

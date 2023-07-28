@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Delete, Put, UseGuards, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -9,6 +9,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { UnbanUserDto } from './dto/unban-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -25,7 +26,7 @@ export class UsersController {
 
     @ApiOperation({summary: 'Получение всех пользователей'})
     @ApiResponse({status: 200, type: [User]})
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Get()
     getAll() {
         return this.usersService.getAllUsers();
@@ -45,6 +46,13 @@ export class UsersController {
     @Delete(':id')
     deleteUser(@Param('id') id: number) {
         return this.usersService.deleteUserById(id)
+    }
+
+    @ApiOperation({summary: 'Изменение пользователя по ID'})
+    @ApiResponse({status: 200})
+    @Patch(':id')
+    update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.update(id, updateUserDto);
     }
 
     @ApiOperation({summary: 'Изменение роли'})

@@ -31,7 +31,7 @@ function range(start: number, end: number): number[] {
 };
 
 function getEmptySpace(todayEntries: Entry[]): number[] {
-    let emptySpace = Array(24*60-1).fill(0).map((element, index) => index)
+    let emptySpace = Array(24*60).fill(0).map((element, index) => index) // счет начинается с нуля, поэтому не вычитаю единицу
     todayEntries.forEach(function(entry: Entry){
         emptySpace = emptySpace.filter(x => !range(timeToMinutes(entry.from.toJSON().slice(11, 16)), timeToMinutes(entry.to.toJSON().slice(11, 16))).includes(x))
         emptySpace.push(timeToMinutes(entry.from.toJSON().slice(11, 16)), timeToMinutes(entry.to.toJSON().slice(11, 16))) // Здесь я включаю границу множества, чтобы можно было, например, начинать запись с 05:00, если предыдущая запись закончилась в 05:00
@@ -59,6 +59,9 @@ export default function validateEntryForEntryCalendar(calendarData: Entry[], for
     if (todayEntries) {
         let emptySpace = [] as number[]
         Array.isArray(todayEntries) ? emptySpace = getEmptySpace(todayEntries) : emptySpace = getEmptySpace([todayEntries])
+        console.log('\n\n\n\n' + emptySpace)
+        console.log('\n\n\n\n' + range(start_time, end_time).sort().join(','))
+        console.log('\n\n\n\n' + emptySpace.filter(x => range(start_time, end_time).includes(x)).sort().join(','))
         if (range(start_time, end_time).sort().join(',') === emptySpace.filter(x => range(start_time, end_time).includes(x)).sort().join(',')) {
             return true
         } else {
