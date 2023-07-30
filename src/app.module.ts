@@ -15,6 +15,7 @@ import { WmEntriesModule } from './wm-entries/wm-entries.module';
 import { WmEntry } from "./wm-entries/entities/wm-entry.entity";
 import { WmsModule } from './wms/wms.module';
 import { Wm } from "./wms/entities/wm.entity";
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
     controllers: [],
@@ -40,6 +41,7 @@ import { Wm } from "./wms/entities/wm.entity";
         RoomsModule,
         WmEntriesModule,
         WmsModule,
+        PaymentModule,
     ]
 })
 export class AppModule {}

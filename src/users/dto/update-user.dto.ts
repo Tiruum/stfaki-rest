@@ -11,4 +11,7 @@ export class UpdateUserDto {
     @ApiProperty({example: '12345', description: 'Пароль пользователя'})
     readonly password: string
 
+    @ApiProperty({example: 'agdsfnsmetbljnkarbUNVRVMlajnmlhNRGkjl', description: 'Refresh токен'})
+    readonly refreshToken: string;
+
 }
