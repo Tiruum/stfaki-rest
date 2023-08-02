@@ -1,5 +1,6 @@
 import {Model, Table, Column, DataType, BelongsToMany, HasMany} from "sequelize-typescript"
 import { Entry } from "src/entries/entities/entry.entity";
+import { Payment } from "src/payment/payment.model";
 import { Role } from "src/roles/roles.model";
 import { UserRoles } from "src/roles/user-roles.model";
 import { Room } from "src/rooms/entities/room.entity";
@@ -25,6 +26,9 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     password: string;
 
+    @Column({type: DataType.STRING, allowNull: true})
+    refreshToken: string;
+
     @Column({type: DataType.INTEGER, allowNull: false, defaultValue: 0})
     balance: number;
 
@@ -45,5 +49,8 @@ export class User extends Model<User, UserCreationAttrs> {
 
     @HasMany(() => WmEntry)
     wmEntries: WmEntry[]
+
+    @HasMany(() => Payment)
+    payments: Payment[]
 
 }

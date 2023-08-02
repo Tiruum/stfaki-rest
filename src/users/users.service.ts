@@ -43,7 +43,8 @@ export class UsersService {
     }
 
     async update(id: number, updateUserDto: UpdateUserDto) {
-        const room = await this.userRepository.update({...updateUserDto}, {where: {id}, returning: true})
+        const user = await this.getUserById(id)
+        const room = await this.userRepository.update({...user, ...updateUserDto}, {where: {id}, returning: true})
         return room
     }
 

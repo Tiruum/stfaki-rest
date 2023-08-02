@@ -16,6 +16,7 @@ import { WmEntry } from "./wm-entries/entities/wm-entry.entity";
 import { WmsModule } from './wms/wms.module';
 import { Wm } from "./wms/entities/wm.entity";
 import { PaymentModule } from './payment/payment.module';
+import { Payment } from "./payment/payment.model";
 
 @Module({
     controllers: [],
@@ -31,7 +32,7 @@ import { PaymentModule } from './payment/payment.module';
             username: process.env.PG_USERNAME,
             password: process.env.PG_PASSWORD,
             database: process.env.PG_DB,
-            models: [User, Role, UserRoles, Room, Entry, WmEntry, Wm],
+            models: [User, Role, UserRoles, Room, Entry, WmEntry, Wm, Payment],
             autoLoadModels: true
         }),
         UsersModule,
