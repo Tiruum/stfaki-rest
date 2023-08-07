@@ -19,18 +19,21 @@ export class WmsController {
     return this.wmsService.findAll();
   }
 
-  @Get(':value')
-  findByValue(@Param('value') value: number) {
-    return this.wmsService.findByValue(value);
+  @Get(':dorm_value')
+  findByValue(@Param('dorm_value') dorm_value: string) {
+    const [dorm, value] = dorm_value.split('_')
+    return this.wmsService.findByValue(dorm, +value);
   }
 
-  @Patch(':value')
-  update(@Param('value') value: string, @Body() updateWmDto: UpdateWmDto) {
-    return this.wmsService.update(+value, updateWmDto);
+  @Patch(':dorm_value')
+  update(@Param('dorm_value') dorm_value: string, @Body() updateWmDto: UpdateWmDto) {
+    const [dorm, value] = dorm_value.split('_')
+    return this.wmsService.update(dorm, +value, updateWmDto);
   }
 
-  @Delete(':value')
-  remove(@Param('value') value: string) {
-    return this.wmsService.remove(+value);
+  @Delete(':dorm_value')
+  remove(@Param('dorm_value') dorm_value: string) {
+    const [dorm, value] = dorm_value.split('_')
+    return this.wmsService.remove(dorm, +value);
   }
 }

@@ -29,6 +29,9 @@ export class WmEntry extends Model<WmEntry, WmEntryCreationAttrs> {
     wmId: number;
 
     @Column({type: DataType.STRING, allowNull: false})
+    dorm: string;
+
+    @Column({type: DataType.STRING, allowNull: false})
     time: string;
 
     @Column({type: DataType.STRING, allowNull: false})

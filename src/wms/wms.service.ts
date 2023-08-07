@@ -20,18 +20,18 @@ export class WmsService {
     return wms;
   }
 
-  async findByValue(value: number) {
-    const wms = await this.wmRepository.findOne({where: {value}});
+  async findByValue(dorm: string, value: number) {
+    const wms = await this.wmRepository.findOne({where: {dorm, value}});
     return wms;
   }
 
-  async update(value: number, updateWmDto: UpdateWmDto): Promise<Wm> {
-    const wm = await this.wmRepository.update({...updateWmDto}, {where: {value}, returning: true})
+  async update(dorm: string, value: number, updateWmDto: UpdateWmDto): Promise<Wm> {
+    const wm = await this.wmRepository.update({...updateWmDto}, {where: {dorm, value}, returning: true})
     return wm[0][0];
   }
 
-  async remove(value: number) {
-    const wm = await this.wmRepository.destroy({where: {value}})
+  async remove(dorm: string, value: number) {
+    const wm = await this.wmRepository.destroy({where: {dorm, value}})
     return wm
   }
 }

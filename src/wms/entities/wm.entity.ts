@@ -19,6 +19,9 @@ export class Wm extends Model<Wm, WmCreationAttrs> {
     @Column({type: DataType.INTEGER, allowNull: false})
     price: number;
 
+    @Column({type: DataType.STRING, allowNull: false})
+    dorm: string;
+
     @Column({type: DataType.BOOLEAN, allowNull: false, defaultValue: true})
     isActive: boolean;
 

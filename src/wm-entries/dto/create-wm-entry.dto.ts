@@ -6,10 +6,13 @@ export class CreateWmEntryDto {
     readonly status: "closed" | "passed" | "booked" | "empty";
 
     @ApiProperty({example: '1', description: 'ID пользователя, который записывается в ячейку'})
-    readonly userId: number | null;
+    readonly userId: number;
 
     @ApiProperty({example: '4', description: 'Номер стиральной машины'})
-    readonly wmValue: number | null;
+    readonly wmValue: number;
+
+    @ApiProperty({example: '4', description: 'Номер стиральной машины'})
+    readonly dorm: string;
 
     @ApiProperty({example: '00:00 - 02:00', description: 'Промежуток времени, на который записываются'})
     readonly time: string;

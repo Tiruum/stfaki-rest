@@ -19,7 +19,7 @@ export class WmEntriesService {
     
     if (createWmEntryDto.userId != null) {
       const user = await this.usersService.getUserById(createWmEntryDto.userId);
-      const wm = await this.wmsService.findByValue(createWmEntryDto.wmValue)
+      const wm = await this.wmsService.findByValue(createWmEntryDto.dorm, createWmEntryDto.wmValue)
       if (user && wm) {
         wmEntry.$set('userInfo', user.id);
         wmEntry.userInfo = user;
@@ -42,8 +42,8 @@ export class WmEntriesService {
     return wmEntry;
   }
 
-  async findByDate(date: string): Promise<WmEntry[]> {
-    const wmEntries = await this.wmEntryRepository.findAll({where: {date}, include: {all: true}});
+  async findByDate(date: string, dorm: string): Promise<WmEntry[]> {
+    const wmEntries = await this.wmEntryRepository.findAll({where: {date, dorm}, include: {all: true}});
     return wmEntries;
   }
 

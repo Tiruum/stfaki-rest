@@ -33,9 +33,10 @@ export class WmEntriesController {
 
   @ApiOperation({summary: 'Получение записей по дате'})
   @ApiResponse({status: 200, type: [WmEntry]})
-  @Get(':date')
-  findByDate(@Param('date') date: string) {
-    return this.wmEntriesService.findByDate(date);
+  @Get(':dorm_date')
+  findByDate(@Param('dorm_date') dorm_date: string) {
+    const [dorm, date] = dorm_date.split('_')
+    return this.wmEntriesService.findByDate(date, dorm);
   }
 
   @ApiOperation({summary: 'Изменение записи'})

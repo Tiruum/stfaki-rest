@@ -8,6 +8,9 @@ export class CreateWmDto {
     @ApiProperty({example: 30, description: 'Стоимость стирки в этой стиральной машине'})
     readonly price: number;
 
+    @ApiProperty({example: "14", description: 'Общежитие'})
+    readonly dorm: string;
+
     @ApiProperty({example: false, description: 'Активна ли стиральная машина'})
     readonly isActive: boolean;
 

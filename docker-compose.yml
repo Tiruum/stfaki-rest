@@ -2,14 +2,23 @@ version: '3.5'
 
 services:
 
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+
   nginx:
     image: nginx:latest
     container_name: nginx
     volumes:
-      - ./nginx:/etc/nginx/conf.d/
+      - ./nginx/conf:/etc/nginx/conf.d/:ro
+      - ./certbot/www:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
     restart: always
     ports:
-      - "80:80"
+      - 80:80
+      - 443:443
 
   backend:
     image: tiruum/stfaki-backend:latest
@@ -20,7 +29,7 @@ services:
     #   - ./backend:/app
     #   - /app/node_modules
     ports:
-      - '5000:5000'
+      - 5000:5000
     depends_on:
       - db
       - nginx
@@ -36,7 +45,7 @@ services:
     #   - ./frontend:/app
     #   - /app/node_modules
     ports:
-      - '3000:3000'
+      - 3000:3000
     depends_on:
       - db
       - backend
@@ -63,7 +72,7 @@ services:
   #     - PGADMIN_DEFAULT_EMAIL=postgres
   #     - PGADMIN_DEFAULT_PASSWORD=Selin2002
   #   ports:
-  #     - '5050:80'
+  #     - 5050:80
   #   depends_on:
   #     - db
 
