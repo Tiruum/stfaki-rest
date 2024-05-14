@@ -7,6 +7,7 @@ import { WmEntry } from './entities/wm-entry.entity';
 import { UsersModule } from 'src/users/users.module';
 import { Wm } from 'src/wms/entities/wm.entity';
 import { WmsModule } from 'src/wms/wms.module';
+import { PaymentModule } from 'src/payment/payment.module';
 
 @Module({
   controllers: [WmEntriesController],
@@ -14,7 +15,8 @@ import { WmsModule } from 'src/wms/wms.module';
   imports: [
     SequelizeModule.forFeature([User, WmEntry, Wm]),
     forwardRef(() => UsersModule),
-    forwardRef(() => WmsModule)
+    forwardRef(() => WmsModule),
+    forwardRef(() => PaymentModule)
   ],
   exports: [
     WmEntriesService

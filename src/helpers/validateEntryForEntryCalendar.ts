@@ -50,7 +50,7 @@ export default function validateEntryForEntryCalendar(calendarData: Entry[], for
     const end_time = timeToMinutes(form.to.toJSON().slice(11, 16))
     
     if ((form.title.length > 25) || (form.description.length > 50)) throw new HttpException("Нельзя делать названия слишком длинными", HttpStatus.BAD_REQUEST)
-    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(form.title) || /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(form.description)) throw new HttpException("Не пытайся делать SQL инъекции, гнида", HttpStatus.BAD_REQUEST)
+    if (/[%\\'"]/.test(form.title) || /[%\\'"]/.test(form.description)) throw new HttpException("Недопустимые литералы в названии или описании", HttpStatus.BAD_REQUEST)
     if (form.from.toJSON().slice(0, 10) !== form.to.toJSON().slice(0, 10)) throw new HttpException("Пока что можно бронировать комнату в пределах одного дня", HttpStatus.BAD_REQUEST)
     if (start_time >= end_time) throw new HttpException("Ошибка в задании времени", HttpStatus.BAD_REQUEST)
     if (end_time - start_time < 10) throw new HttpException("Нельзя делать записи короче 10 минут", HttpStatus.BAD_REQUEST)

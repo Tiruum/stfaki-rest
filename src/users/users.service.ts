@@ -44,8 +44,8 @@ export class UsersService {
 
     async update(id: number, updateUserDto: UpdateUserDto) {
         const user = await this.getUserById(id)
-        const room = await this.userRepository.update({...user, ...updateUserDto}, {where: {id}, returning: true})
-        return room
+        const updatedUser = await this.userRepository.update({...user, ...updateUserDto}, {where: {id}, returning: true})
+        return 'updated'
     }
 
     async changeRole(dto: AddRoleDto) {

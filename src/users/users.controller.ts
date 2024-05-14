@@ -50,6 +50,8 @@ export class UsersController {
 
     @ApiOperation({summary: 'Изменение пользователя по ID'})
     @ApiResponse({status: 200})
+    @Roles("admin")
+    @UseGuards(RolesGuard)
     @Patch(':id')
     update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.update(id, updateUserDto);

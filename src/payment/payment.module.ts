@@ -14,6 +14,9 @@ import { Payment } from './payment.model';
     SequelizeModule.forFeature([Payment, User]),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule)
+  ],
+  exports: [
+    PaymentService,
   ]
 })
 export class PaymentModule {}

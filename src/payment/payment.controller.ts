@@ -31,14 +31,6 @@ export class PaymentController {
         return this.paymentService.getAllPayments()
     }
 
-    @ApiOperation({summary: 'Подтверждение платежа в yookassa'})
-    @ApiResponse({status: 200, type: 'YookassaBody'})
-    // @UseGuards(JwtAuthGuard)
-    @Post('/yoostatus')
-    async getPaymentStatus(@Body() paymentStatusDto: PaymentStatusDto) {
-        return this.paymentService.paymentStatus(paymentStatusDto)
-    }
-
     @ApiOperation({summary: 'Создание платежа в локальной базе данных'})
     @ApiResponse({status: 200, type: 'LocalPaymentBody'})
     // @UseGuards(JwtAuthGuard)
@@ -62,11 +54,16 @@ export class PaymentController {
         return this.paymentService.findById(id)
     }
 
-    @ApiOperation({summary: 'Изменение пользователя по ID'})
+    @ApiOperation({summary: 'Изменение платежа по локальному ID'})
     @ApiResponse({status: 200})
     @Patch('/local/:id')
     async update(@Param('id') id: string, @Body() updatePaymentDto: CreatePaymentDto) {
         return this.paymentService.update(id, updatePaymentDto);
+    }
+
+    @Post('/notification')
+    async handleNotification(@Body() payload: {type: string, event: string, object: {id: string, status: string, amount: {value: string, currency: string}}}) {
+        return this.paymentService.handleNotification(payload)
     }
 
 

@@ -18,12 +18,13 @@ import { Wm } from "./wms/entities/wm.entity";
 import { PaymentModule } from './payment/payment.module';
 import { Payment } from "./payment/payment.model";
 
+const ENV = process.env.NODE_ENV;
 @Module({
     controllers: [],
     providers: [],
     imports: [
         ConfigModule.forRoot({
-            envFilePath: '.env'
+            envFilePath: !ENV ? '.env' : `.env.${ENV}`,
         }),
         SequelizeModule.forRoot({
             dialect: 'postgres',

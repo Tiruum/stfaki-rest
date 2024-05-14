@@ -10,8 +10,10 @@ import * as YooKassa from 'yookassa'
 import { UpdatePaymentDto } from './dto/updatePayment.dto';
 
 const yooKassa = new YooKassa({
-    shopId: '237040',
-    secretKey: 'test_ctxZrgtSsZuMSwFSdkLsw9OZylAa3YHkfy_ySYx_FEU'
+    shopId: '235557',
+    secretKey: 'live_DWKFBD_sAzWLlROzYI7Y4T7W9tUc5ViHMuFaNjzbW8I',
+    // shopId: '237040',
+    // secretKey: 'test_ctxZrgtSsZuMSwFSdkLsw9OZylAa3YHkfy_ySYx_FEU'
 })
 
 @Injectable()
@@ -21,6 +23,7 @@ export class PaymentService {
     
     async makePayment(makePaymentDto: MakePaymentDto) {
         try {
+            const user = await this.userService.getUserById(Number(makePaymentDto.userId))
             const paymentId = `${new Date().getTime()}${Math.floor(Math.random()*100000)}`
             const payment = await yooKassa.createPayment({
                 amount: {
@@ -32,7 +35,23 @@ export class PaymentService {
                     type: 'redirect',
                     return_url: `${process.env.BASE_FRONT_URL}/paymentresponse?paymentId=${paymentId}`
                 },
-                description: 'Тестовая оплата',
+                description: 'Пополнение счета',
+                receipt: {
+                    customer: {
+                        email: user.email
+                    },
+                    items: [
+                        {
+                            description: "Пополнение счета на сайте студенческих сервисов для дальнейшей оплаты стирки в стиральных машинах общего пользования",
+                            quantity: 1,
+                            amount: {
+                                value: makePaymentDto.amount,
+                                currency: 'RUB',
+                            },
+                            vat_code: 1
+                        }
+                    ]
+                },
                 metadata: {
                     metaId: paymentId
                 }
@@ -42,7 +61,8 @@ export class PaymentService {
             }
             return payment
         } catch (error) {
-            throw new ForbiddenException(error)
+            console.log(error)
+            throw new HttpException("Ошибка платежа", HttpStatus.I_AM_A_TEAPOT)
         }
     }
     async getPayment(id: string) {
@@ -89,17 +109,14 @@ export class PaymentService {
         return payment;
     }
 
+    async findByYookassaId(yookassaId: string): Promise<Payment> {
+        const payment = await this.paymentRepository.findOne({where: {yookassaId}, include: {all: true}});
+        return payment;
+    }
+
     async update(localId: string, updatePaymentDto: UpdatePaymentDto) {
         const foundedPayment = await this.findById(localId)
         const payment = await this.paymentRepository.update({...foundedPayment, ...updatePaymentDto}, {where: {localId}, returning: true})
-        return payment
-    }
-
-    async paymentStatus(paymentStatusDto: PaymentStatusDto) {
-        if (paymentStatusDto.event !== 'payment.waiting_for_capture') return
-        console.log(paymentStatusDto)
-
-        const payment = await yooKassa.capturePayment(paymentStatusDto.object.id)
         return payment
     }
 
@@ -114,6 +131,17 @@ export class PaymentService {
             return new HttpException(updatedUser[1][0], HttpStatus.OK);
         } else {
             return new HttpException(`Статус платежа ${yooKassaPayment.status}`, HttpStatus.CONTINUE);
+        }
+    }
+
+    async handleNotification(notification: {type: string, event: string, object: {id: string, status: string, amount: {value: string, currency: string}}}) {
+        const foundedPayment = await this.findByYookassaId(notification.object.id)
+
+        if (notification.event === "payment.succeeded" && foundedPayment.isChecked === false) {
+            const user = await this.userService.getUserById(foundedPayment.userId)
+            this.userService.update(foundedPayment.userId, {balance: Number(user.balance) + Number(notification.object.amount.value)})
+            this.update(foundedPayment.localId, {isChecked: true})
+            return new HttpException('Payment accepted', HttpStatus.OK)
         }
     }
 
